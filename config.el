@@ -27,6 +27,9 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
 
+;; smartparens remap org-demote, org-promote keys M-LEFT SHIFT and M-RIGHT SHIFT
+(remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
+
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
