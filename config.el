@@ -45,6 +45,7 @@
            :immediate-finish t)
 	  )
 	)
+  (setq org-journal-file-type 'monthly)
   (setq org-protocol-default-template-key "o")
   (setq org-html-validation-link nil)
   )
@@ -58,6 +59,8 @@
 (use-package! org-journal
   :after org
   :config
+  (auto-save-mode)
+  (auto-save-visited-mode)
   (setq org-journal-dir "~/org/journal/")
   (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
   (add-to-list 'org-agenda-files org-journal-dir)
