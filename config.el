@@ -33,6 +33,7 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
+(setq org-log-done 'time)
 
 ;;; org-protocol support
 (use-package! org-protocol
@@ -66,9 +67,21 @@
   (add-to-list 'org-agenda-files org-journal-dir)
   )
 
+;;; Protocol buffers mode
+;;; (use-package! protobuf-mode)
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
+
+
+;; This has key map overlap
+;;
+;; (global-ede-mode t)
+;; (ede-cpp-root-project "bbm"
+;;    :name "bbm"
+;;    :file "~/sources/ede.anchor"
+;;    )
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
