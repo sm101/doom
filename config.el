@@ -27,7 +27,7 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one
       doom-font (font-spec :family "JetBrains Mono" :size 12 :weight 'light)
-      doom-variable-pitch-font (font-spec :family "DejaVu Sans" :size 13))
+)
 
 ;; (setq doom-theme 'doom-one
 ;;       doom-font (font-spec :family "Source Code Pro" :size 12 :weight 'light))
