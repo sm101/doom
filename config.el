@@ -69,9 +69,31 @@
   )
 
 ;; Otherwise it opened stevan-pc auth dialog
-(use-package! tramp
-  :config
-  (setq tramp-completion-use-auth-sources nil))
+;; (use-package! tramp
+;;         :config
+;;         (setq tramp-completion-use-auth-sources nil))
+;;
+(after! tramp
+  (add-to-list 'tramp-methods
+ '("gwsh"
+  (tramp-login-program "gwsh")
+  (tramp-login-args
+    (
+      ("-l" "testgrp")
+     ;; ("-p" "%p")
+     ("%c")
+;; ("-e" "none")
+     ("%h")))
+   (tramp-async-args
+    (("-q")))
+   (tramp-direct-async t)
+   (tramp-remote-shell "/bin/sh")
+   (tramp-remote-shell-login
+    ("-l"))
+   (tramp-remote-shell-args
+    ("-c"))))
+  (setq tramp-debug-to-file t))
+
 
 ;; Python formatter.
 (use-package! yapfify)
@@ -108,6 +130,14 @@
 ;;    :file "~/sources/ede.anchor"
 ;;    )
 
+;; set clangd options and priority (in case ccls is also installed)
+(setq lsp-clients-clangd-args '("-j=3"
+				"--background-index"
+				"--clang-tidy"
+				"--completion-style=detailed"
+				"--header-insertion=never"
+				"--header-insertion-decorators=0"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
