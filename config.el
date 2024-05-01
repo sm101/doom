@@ -41,8 +41,7 @@
 (setq org-log-done 'time)
 
 (after! org
-        (setq org-roam-directory "~/org/roam/")
-        (setq org-roam-index-file "~/org/roam/index.org")
+        (setq org-roam-directory "~/org")
         (setq org-agenda-include-diary t)
         (setq org-tag-alist '(("role" . ?r) ("management" . ?n) ("plan" . ?p)
    ("meeting" . ?m) ("engineer" . ?e) ("poor-org-omissions" . ?s)
@@ -98,12 +97,12 @@
 ;; Python formatter.
 (use-package! yapfify)
 
-
-(use-package lsp-grammarly
-  :ensure t
-  :hook (text-mode . (lambda ()
-                       (require 'lsp-grammarly)
-                       (lsp))))  ; or lsp-deferred
+;; -- 4/25/2024 not supported anymore
+;; (use-package lsp-grammarly
+;;   :ensure t
+;;   :hook (text-mode . (lambda ()
+;;                        (require 'lsp-grammarly)
+;;                        (lsp))))  ; or lsp-deferred
 
 ;; Activate snippets
 (yas-global-mode 1)
