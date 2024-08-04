@@ -138,6 +138,16 @@
 				"--header-insertion-decorators=0"))
 (after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
+
+(use-package! go-translate)
+;; Move this to use-package config:
+;;
+;;(setq gt-langs '(en fr))
+(setq gt-langs '(en sr))
+(setq gt-default-translator (gt-translator :engines (gt-google-engine)
+                                           :taker (gt-taker :prompt t :text 'paragraph)
+                                           :render (gt-insert-render)))
+
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one

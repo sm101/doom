@@ -50,9 +50,10 @@
 ;(unpin! t)
 (package! protobuf-mode)
 (package! yapfify)
-
+(package! go-translate)
 ;; Not supported anymore
 ;; (package! lsp-grammarly)
 
 ;; can be deleted since +roam2 is in init.el
-(package! org-roam)
+;; (package! org-roam)
+;;
