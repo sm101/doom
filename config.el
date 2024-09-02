@@ -143,7 +143,7 @@
 ;; Move this to use-package config:
 ;;
 ;;(setq gt-langs '(en fr))
-(setq gt-langs '(en sr))
+(setq gt-langs '(en es sr))
 (setq gt-default-translator (gt-translator :engines (gt-google-engine)
                                            :taker (gt-taker :prompt t :text 'paragraph)
                                            :render (gt-insert-render)))
