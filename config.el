@@ -147,6 +147,9 @@
 (setq gt-default-translator (gt-translator :engines (gt-google-engine)
                                            :taker (gt-taker :prompt t :text 'paragraph)
                                            :render (gt-insert-render)))
+;; S Up, S Down to switch windows
+(windmove-default-keybindings)
+
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
