@@ -151,9 +151,38 @@
 (setq gt-default-translator (gt-translator :engines (gt-google-engine)
                                            :taker (gt-taker :prompt t :text 'paragraph)
                                            :render (gt-insert-render)))
+
+(setq chatgpt-shell-openai-key (getenv "OPENAI_API_KEY"))
+(use-package! chatgpt-shell)
+
+(defun chatgpt-shell-check-and-correct-paragraph ()
+  "Check and correct the current paragraph using ChatGPT."
+  (interactive)
+  (let* ((bounds (bounds-of-thing-at-point 'paragraph))
+         (start (car bounds))
+         (end (cdr bounds))
+         (original-text (buffer-substring-no-properties start end))
+         (point-offset (- end (point))) ; Save the offset of point from end
+         (checked-text (chatgpt-shell-check-paragraph original-text)))
+    (when checked-text
+      (save-excursion
+        (goto-char start)
+        (delete-region start end)
+        (insert "\n") ; Insert a newline here
+        (insert checked-text))
+      ;; Move the point to its new position relative to the end
+      (goto-char (- (cdr (bounds-of-thing-at-point 'paragraph)) point-offset)))))
+
+(defun chatgpt-shell-check-paragraph (text)
+  "Send TEXT to ChatGPT for spell and grammar checking."
+  (chatgpt-shell-post-chatgpt-messages :messages `(((role . "user") (content . ,(concat
+                     "Please correct the spelling and grammar of the following paragraph."
+                     "Maintain existing org-mode syntax expressions like =this= and *this*."
+                     "Only return the corrected paragraph, not the original text or this prompt."
+                     "Here's the text:\n\n" text))))))
+
 ;; S Up, S Down to switch windows
 (windmove-default-keybindings)
-
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;

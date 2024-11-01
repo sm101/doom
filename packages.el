@@ -51,6 +51,7 @@
 (package! protobuf-mode)
 (package! yapfify)
 (package! go-translate)
+(package! chatgpt-shell)
 ;; Not supported anymore
 ;; (package! lsp-grammarly)
 
