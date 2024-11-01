@@ -138,6 +138,10 @@
 				"--header-insertion-decorators=0"))
 (after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
+;; (after! lsp-haskell  (setenv "PATH" (concat (getenv "PATH") ":/Users/smarkovic/.ghcup/bin"))
+;;                      (setq exec-path (append exec-path '("~/.ghcup/bin")))
+;;                      (setq haskell-interactive-popup-errors nil)
+;;                      )
 
 (use-package! go-translate)
 ;; Move this to use-package config:
