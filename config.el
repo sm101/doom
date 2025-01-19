@@ -115,8 +115,11 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type nil)
 ;; Frame size
-(add-to-list 'default-frame-alist '(height . 53))
-(add-to-list 'default-frame-alist '(width . 120))
+;(add-to-list 'default-frame-alist '(height . 80))
+(add-to-list 'default-frame-alist '(fullscreen . fullheight))
+(add-to-list 'default-frame-alist '(width . 145))
+(add-to-list 'default-frame-alist '(top . 5))
+(add-to-list 'default-frame-alist '(left . 5))
 
 ;; Map key <escape> but _only_ after god-mode is initialized.
 (map! :after god-mode "<escape>" #'god-local-mode)
@@ -178,7 +181,8 @@
                      "Here's the text:\n\n" text))))))
 
 ;; S Up, S Down to switch windows
-(windmove-default-keybindings)
+;; Commented since it takes over S <left> S <right> in calendar picker in org
+;; (windmove-default-keybindings)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
