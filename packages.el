@@ -52,6 +52,7 @@
 (package! yapfify)
 (package! go-translate)
 (package! chatgpt-shell)
+(package! gptel)
 ;; Not supported anymore
 ;; (package! lsp-grammarly)
 

@@ -158,6 +158,10 @@
 (setq chatgpt-shell-openai-key (getenv "OPENAI_API_KEY"))
 (use-package! chatgpt-shell)
 
+(use-package! gptel
+ :config
+ (setq! gptel-api-key (getenv "OPENAI_API_KEY")))
+
 (defun chatgpt-shell-check-and-correct-paragraph ()
   "Check and correct the current paragraph using ChatGPT."
   (interactive)
