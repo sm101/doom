@@ -53,6 +53,7 @@
 (package! go-translate)
 (package! chatgpt-shell)
 (package! gptel)
+(package! jq-mode)
 ;; Not supported anymore
 ;; (package! lsp-grammarly)
 

@@ -25,7 +25,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one
+;; doom-one was default
+(setq doom-theme 'doom-oceanic-next
       doom-font (font-spec :family "JetBrains Mono" :size 12 :weight 'light)
 )
 
@@ -40,6 +41,16 @@
 (setq org-directory "~/org/")
 (setq org-log-done 'time)
 
+(setq org-capture-templates
+  '(    ;; ... other templates
+
+    ("p" "Private Journal Entry"
+         entry (file+datetree "~/org/private/journal.org")
+         "* %?"
+         :empty-lines 1))
+        ;; ... other templates
+    )
+
 (after! org
         (setq org-roam-directory "~/org")
         (setq org-agenda-include-diary t)
@@ -48,30 +59,7 @@
    ("accomplish" . ?a) ("time-consuming-disruption" . ?t) ("people" . ?l)))
         )
 
-;; (setq org-tag-alist '(("role" . ?r) ("management" . ?n) ("plan" . ?p)
-;;    ("meeting" . ?m) ("engineer" . ?e) ("poor-org-omissions" . ?s)
-;;    ("accomplish" . ?a) ("time-consuming-disruption" . ?t) ("people" . ?l)))
 
-;;; org-protocol support
-(use-package! org-protocol
-  :config
-  (setq org-capture-templates
-        '(
-          ("o" "Link capture" entry
-           (file+headline "~/org/org-linkz/Linkz.org" "INBOX")
-           "* %a %U"
-           :immediate-finish t)
-	  )
-	)
-  (setq org-protocol-default-template-key "o")
-  (setq org-html-validation-link nil)
-  )
-
-;; Otherwise it opened stevan-pc auth dialog
-;; (use-package! tramp
-;;         :config
-;;         (setq tramp-completion-use-auth-sources nil))
-;;
 (after! tramp
   (add-to-list 'tramp-methods
  '("gwsh"
@@ -134,11 +122,11 @@
 
 ;; set clangd options and priority (in case ccls is also installed)
 (setq lsp-clients-clangd-args '("-j=3"
-				"--background-index"
-				"--clang-tidy"
-				"--completion-style=detailed"
-				"--header-insertion=never"
-				"--header-insertion-decorators=0"))
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"
+                                "--header-insertion-decorators=0"))
 (after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
 ;; (after! lsp-haskell  (setenv "PATH" (concat (getenv "PATH") ":/Users/smarkovic/.ghcup/bin"))
@@ -162,6 +150,38 @@
  :config
  (setq! gptel-api-key (getenv "OPENAI_API_KEY")))
 
+;; (if (string-equal (system-name) "fll-mpmn2")
+;; mu4 settings
+;; (add-to-list 'load-path "/opt/homebrew/Cellar/mu/1.12.9/share/emacs/site-lisp/mu/mue4")
+
+(set-email-account! "Stevan Akamai"
+                    '((mu4e-sent-folder       . "/Sent Items")
+                      (mu4e-drafts-folder     . "/Drafts")
+                      (mu4e-trash-folder      . "/Deleted items"))
+                    t)
+(setq +mu4e-backend 'offlineimap)
+
+(after! mu4e
+  (setq sendmail-program (executable-find "msmtp")
+        send-mail-function #'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function #'message-send-mail-with-sendmail
+        mu4e-update-interval 15)
+  )
+
+(setq
+ smtpmail-default-smtp-server "smtp.akamai.com"
+ smtpmail-smtp-server         "smtp.akamai.com"
+ smtpmail-local-domain        "akamai.com")
+
+;; Setup motmuch
+(setq notmuch-backend 'offlineimap)
+(setq +notmuch-sync-backend 'offlineimap)
+
+(org-babel-do-load-languages 'org-babel-load-languages
+                             '((jq . t)))
+;;
 ;; S Up, S Down to switch windows
 ;; Commented since it takes over S <left> S <right> in calendar picker in org
 ;; (windmove-default-keybindings)
