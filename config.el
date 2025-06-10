@@ -41,24 +41,21 @@
 (setq org-directory "~/org/")
 (setq org-log-done 'time)
 
-(setq org-capture-templates
-  '(    ;; ... other templates
-
-    ("p" "Private Journal Entry"
-         entry (file+datetree "~/org/private/journal.org")
-         "* %?"
-         :empty-lines 1))
-        ;; ... other templates
-    )
 
 (after! org
-        (setq org-roam-directory "~/org")
-        (setq org-agenda-include-diary t)
-        (setq org-tag-alist '(("role" . ?r) ("management" . ?n) ("plan" . ?p)
-   ("meeting" . ?m) ("engineer" . ?e) ("poor-org-omissions" . ?s)
-   ("accomplish" . ?a) ("time-consuming-disruption" . ?t) ("people" . ?l)))
+  (setq org-roam-directory "~/org")
+  (setq org-agenda-include-diary t)
+  ;; Rely on per file tags
+  ;; (setq org-tag-alist '(("role" . ?r) ("management" . ?n) ("plan" . ?p)
+  ;;                       ("meeting" . ?m) ("engineer" . ?e) ("poor-org-omissions" . ?s)
+  ;;                       ("accomplish" . ?a) ("time-consuming-disruption" . ?t) ("people" . ?l)))
+  ;; use doom default instead
+  (setq org-capture-templates
+        `("j" "Journal" entry
+          (file+olp+datetree +org-capture-journal-file)
+          "* %U %?\n%i\n%a" :prepend t)
         )
-
+  )
 
 (after! tramp
   (add-to-list 'tramp-methods
