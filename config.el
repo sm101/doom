@@ -141,11 +141,14 @@
                                            :render (gt-insert-render)))
 
 (setq chatgpt-shell-openai-key (getenv "OPENAI_API_KEY"))
+(setq chatgpt-shell-anthropic-key (getenv "ANTHROPIC_API_KEY"))
 (use-package! chatgpt-shell)
 
 (use-package! gptel
  :config
  (setq! gptel-api-key (getenv "OPENAI_API_KEY")))
+
+(gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key)
 
 ;; (if (string-equal (system-name) "fll-mpmn2")
 ;; mu4 settings
