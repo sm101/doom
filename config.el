@@ -51,9 +51,9 @@
   ;;                       ("accomplish" . ?a) ("time-consuming-disruption" . ?t) ("people" . ?l)))
   ;; use doom default instead
   (setq org-capture-templates
-        `("j" "Journal" entry
+        `(("j" "Journal" entry
           (file+olp+datetree +org-capture-journal-file)
-          "* %U %?\n%i\n%a" :prepend t)
+          "* %U %?\n%i\n%a" :prepend t))
         )
   )
 
