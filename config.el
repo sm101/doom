@@ -41,6 +41,10 @@
 (setq org-directory "~/org/")
 (setq org-log-done 'time)
 
+;; Load secrets if file exists
+(let ((secrets-file (doom-path doom-user-dir "secrets.el")))
+  (when (file-exists-p secrets-file)
+    (load secrets-file)))
 
 (after! org
   (setq org-roam-directory "~/org")
@@ -140,13 +144,11 @@
                                            :taker (gt-taker :prompt t :text 'paragraph)
                                            :render (gt-insert-render)))
 
-(setq chatgpt-shell-openai-key (getenv "OPENAI_API_KEY"))
-(setq chatgpt-shell-anthropic-key (getenv "ANTHROPIC_API_KEY"))
 (use-package! chatgpt-shell)
 
 (use-package! gptel
  :config
- (setq! gptel-api-key (getenv "OPENAI_API_KEY")))
+ (setq! gptel-api-key chatgpt-shell-openai-key))
 
 (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key)
 
