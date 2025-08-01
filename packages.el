@@ -50,7 +50,7 @@
 ;(unpin! t)
 (package! protobuf-mode)
 (package! yapfify)
-(package! go-translate)
+(package! gt)
 (package! chatgpt-shell)
 (package! gptel)
 (package! jq-mode)

@@ -135,7 +135,7 @@
 ;;                      (setq haskell-interactive-popup-errors nil)
 ;;                      )
 
-(use-package! go-translate)
+(use-package! gt)
 ;; Move this to use-package config:
 ;;
 ;;(setq gt-langs '(en fr))
