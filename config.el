@@ -192,6 +192,7 @@
               ("TAB" . 'copilot-accept-completion)
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilot-accept-completion-by-word)))
+(use-package! copilot-chat)
 
 ;;
 ;; S Up, S Down to switch windows
