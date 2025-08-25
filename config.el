@@ -49,11 +49,6 @@
 (after! org
   (setq org-roam-directory "~/org")
   (setq org-agenda-include-diary t)
-  ;; Rely on per file tags
-  ;; (setq org-tag-alist '(("role" . ?r) ("management" . ?n) ("plan" . ?p)
-  ;;                       ("meeting" . ?m) ("engineer" . ?e) ("poor-org-omissions" . ?s)
-  ;;                       ("accomplish" . ?a) ("time-consuming-disruption" . ?t) ("people" . ?l)))
-  ;; use doom default instead
   (setq org-capture-templates
         `(("j" "Journal" entry
           (file+olp+datetree +org-capture-journal-file)
@@ -86,25 +81,15 @@
 ;; Python formatter.
 (use-package! yapfify)
 
-;; -- 4/25/2024 not supported anymore
-;; (use-package lsp-grammarly
-;;   :ensure t
-;;   :hook (text-mode . (lambda ()
-;;                        (require 'lsp-grammarly)
-;;                        (lsp))))  ; or lsp-deferred
-
-;; Activate snippets
 (yas-global-mode 1)
 (add-hook `yas-minor-mode-hook (lambda () (yas-activate-extra-mode 'fundamental-mode)))
 ;;;
 ;;; Protocol buffers mode
 ;;; (use-package! protobuf-mode)
 
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
+
 (setq display-line-numbers-type nil)
 ;; Frame size
-;(add-to-list 'default-frame-alist '(height . 80))
 (add-to-list 'default-frame-alist '(fullscreen . fullheight))
 (add-to-list 'default-frame-alist '(width . 145))
 (add-to-list 'default-frame-alist '(top . 5))
@@ -112,14 +97,6 @@
 
 ;; Map key <escape> but _only_ after god-mode is initialized.
 (map! :after god-mode "<escape>" #'god-local-mode)
-
-;; This has key map overlap
-;;
-;; (global-ede-mode t)
-;; (ede-cpp-root-project "bbm"
-;;    :name "bbm"
-;;    :file "~/sources/ede.anchor"
-;;    )
 
 ;; set clangd options and priority (in case ccls is also installed)
 (setq lsp-clients-clangd-args '("-j=3"
@@ -130,22 +107,12 @@
                                 "--header-insertion-decorators=0"))
 (after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
-;; (after! lsp-haskell  (setenv "PATH" (concat (getenv "PATH") ":/Users/smarkovic/.ghcup/bin"))
-;;                      (setq exec-path (append exec-path '("~/.ghcup/bin")))
-;;                      (setq haskell-interactive-popup-errors nil)
-;;                      )
-
 (use-package! gt)
-;; Move this to use-package config:
-;;
-;;(setq gt-langs '(en fr))
 (setq gt-langs '(en es sr))
 (setq gt-default-translator (gt-translator :engines (gt-google-engine)
                                            :taker (gt-taker :prompt t :text 'paragraph)
                                            :render (gt-insert-render)))
-
 (use-package! chatgpt-shell)
-
 (use-package! gptel
  :config
  (setq! gptel-api-key chatgpt-shell-openai-key))
@@ -193,11 +160,6 @@
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilot-accept-completion-by-word)))
 (use-package! copilot-chat)
-
-;;
-;; S Up, S Down to switch windows
-;; Commented since it takes over S <left> S <right> in calendar picker in org
-;; (windmove-default-keybindings)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
