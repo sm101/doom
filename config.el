@@ -183,6 +183,16 @@
 
 (org-babel-do-load-languages 'org-babel-load-languages
                              '((jq . t)))
+
+;; https://github.com/copilot-emacs/copilot.el
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
 ;;
 ;; S Up, S Down to switch windows
 ;; Commented since it takes over S <left> S <right> in calendar picker in org

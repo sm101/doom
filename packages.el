@@ -54,6 +54,9 @@
 (package! chatgpt-shell)
 (package! gptel)
 (package! jq-mode)
+(package! copilot
+  :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+
 ;; Not supported anymore
 ;; (package! lsp-grammarly)
 
