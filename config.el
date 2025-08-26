@@ -119,6 +119,10 @@
 
 (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key)
 
+(use-package! dall-e-shell
+  :config
+  (setq dall-e-shell-openai-key chatgpt-shell-openai-key))
+
 ;; (if (string-equal (system-name) "fll-mpmn2")
 ;; mu4 settings
 ;; (add-to-list 'load-path "/opt/homebrew/Cellar/mu/1.12.9/share/emacs/site-lisp/mu/mue4")

@@ -52,6 +52,7 @@
 (package! yapfify)
 (package! gt)
 (package! chatgpt-shell)
+(package! dall-e-shell)
 (package! gptel)
 (package! jq-mode)
 (package! copilot
