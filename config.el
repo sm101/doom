@@ -164,6 +164,9 @@
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilot-accept-completion-by-word)))
 (use-package! copilot-chat)
+(use-package! exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
