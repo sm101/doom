@@ -54,6 +54,12 @@
           (file+olp+datetree +org-capture-journal-file)
           "* %U %?\n%i\n%a" :prepend t))
         )
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-listings-options '(("breaklines" "true")))
+  (setq org-latex-src-block-backend 'minted)
+  (setq org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   )
 
 (after! tramp
