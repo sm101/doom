@@ -46,6 +46,27 @@
   (when (file-exists-p secrets-file)
     (load secrets-file)))
 
+(defvar my/org-agenda-files-work '("~/org/work")
+  "Work org agenda files.")
+
+(defvar my/org-agenda-files-personal '("~/org/personal")
+  "Personal org agenda files.")
+
+(defvar my/org-agenda-context 'work
+  "Current org agenda context.")
+
+(defun my/toggle-org-agenda-files ()
+  "Toggle between work and personal org-agenda-files."
+  (interactive)
+  (if (eq my/org-agenda-context 'work)
+      (progn
+        (setq org-agenda-files my/org-agenda-files-personal)
+        (setq my/org-agenda-context 'personal)
+        (message "Switched to personal org-agenda-files"))
+    (setq org-agenda-files my/org-agenda-files-work)
+    (setq my/org-agenda-context 'work)
+    (message "Switched to work org-agenda-files")))
+
 (after! org
   (setq org-roam-directory "~/org")
   (setq org-agenda-include-diary t)
@@ -60,7 +81,20 @@
   (setq org-latex-pdf-process
       '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  (setq org-agenda-custom-commands
+      '(("w" "Work Agenda"
+         ((agenda "" ((org-agenda-files my/org-agenda-files-work))
+          (tags "work-priority") )  ;; Add other custom views as needed
+         ))
+        ("p" "Personal Agenda"
+         ((agenda "" ((org-agenda-files my/org-agenda-files-personal))
+          (tags "home-priority") )  ;; Add other custom views as needed
+         ))
+        ))
+
   )
+
+(map! :after org :map org-mode-map "C-c T" #'my/toggle-org-agenda-files)
 
 (after! tramp
   (add-to-list 'tramp-methods
