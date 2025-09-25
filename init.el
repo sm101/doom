@@ -171,7 +171,7 @@
 
        :email
        (mu4e +offlineimap)
-       (notmuch +afew)
+       ;; (notmuch +afew)
        ;;notmuch
        ;;(wanderlust +gmail)
 
