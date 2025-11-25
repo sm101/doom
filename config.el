@@ -81,6 +81,7 @@
   (setq org-latex-pdf-process
       '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  (setq org-agenda-files my/org-agenda-files-work) 
   (setq org-agenda-custom-commands
       '(("w" "Work Agenda"
          ((agenda "" ((org-agenda-files my/org-agenda-files-work))
