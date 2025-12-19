@@ -28,7 +28,10 @@
 ;; doom-one was default
 (setq doom-theme 'doom-oceanic-next
       doom-font (font-spec :family "JetBrains Mono" :size 12 :weight 'light)
-)
+      ;; doom-font (font-spec :family "Iosevka" :size 14)
+      ;; doom-variable-pitch-font (font-spec :family "Iosevka" :size 14)
+      ;; doom-big-font (font-spec :family "Iosevka" :size 20)
+      )
 
 ;; (setq doom-theme 'doom-one
 ;;       doom-font (font-spec :family "Source Code Pro" :size 12 :weight 'light))
