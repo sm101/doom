@@ -156,7 +156,7 @@
 (setq gt-default-translator (gt-translator :engines (gt-google-engine)
                                            :taker (gt-taker :prompt t :text 'paragraph)
                                            :render (gt-insert-render)))
-(use-package! chatgpt-shell)
+;; (use-package! chatgpt-shell)
 (use-package! gptel
  :config
  (setq! gptel-api-key chatgpt-shell-openai-key))
@@ -166,9 +166,9 @@
       (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
 (setq gptel-model 'claude-opus-4-5-20251101) ; or your preferred model
 
-(use-package! dall-e-shell
-  :config
-  (setq dall-e-shell-openai-key chatgpt-shell-openai-key))
+;; (use-package! dall-e-shell
+;;   :config
+;;   (setq dall-e-shell-openai-key chatgpt-shell-openai-key))
 
 ;; (if (string-equal (system-name) "fll-mpmn2")
 ;; mu4 settings
