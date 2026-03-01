@@ -27,7 +27,7 @@
 ;; `load-theme' function. This is the default:
 ;; doom-one was default
 (setq doom-theme 'doom-oceanic-next
-      doom-font (font-spec :family "JetBrains Mono" :size 12 :weight 'light)
+      doom-font (font-spec :family "JetBrains Mono" :size 13 :weight 'light)
       ;; doom-font (font-spec :family "Iosevka" :size 14)
       ;; doom-variable-pitch-font (font-spec :family "Iosevka" :size 14)
       ;; doom-big-font (font-spec :family "Iosevka" :size 20)
@@ -164,7 +164,7 @@
 ;; set default backend and model. 
 (setq gptel-backend
       (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
-(setq gptel-model 'claude-opus-4-5-20251101) ; or your preferred model
+(setq gptel-model 'claude-opus-4-6) ; or your preferred model
 
 ;; (use-package! dall-e-shell
 ;;   :config
