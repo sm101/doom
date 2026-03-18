@@ -165,6 +165,8 @@
 (setq gptel-model 'claude-opus-4-6
       gptel-backend (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
 
+(gptel-make-openai "ChatGPT")
+
 ;; (use-package! dall-e-shell
 ;;   :config
 ;;   (setq dall-e-shell-openai-key chatgpt-shell-openai-key))
