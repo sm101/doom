@@ -157,15 +157,13 @@
                                            :taker (gt-taker :prompt t :text 'paragraph)
                                            :render (gt-insert-render)))
 ;; (use-package! chatgpt-shell)
-(use-package! gptel
- :config
- (setq! gptel-api-key chatgpt-shell-openai-key))
-
+(use-package! gptel)
+ 
 ;; set default backend and model. 
 (setq gptel-model 'claude-opus-4-6
       gptel-backend (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
-
-(gptel-make-openai "ChatGPT")
+;;register openai, can be selected in menu
+(gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
 
 ;; (use-package! dall-e-shell
 ;;   :config
