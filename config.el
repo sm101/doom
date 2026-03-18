@@ -162,9 +162,8 @@
  (setq! gptel-api-key chatgpt-shell-openai-key))
 
 ;; set default backend and model. 
-(setq gptel-backend
-      (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
-(setq gptel-model 'claude-opus-4-6) ; or your preferred model
+(setq gptel-model 'claude-opus-4-6
+      gptel-backend (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
 
 ;; (use-package! dall-e-shell
 ;;   :config
