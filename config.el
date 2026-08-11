@@ -26,7 +26,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; doom-one was default
-(setq doom-theme 'doom-oceanic-next
+(setq doom-theme 'doom-one
       doom-font (font-spec :family "JetBrains Mono" :size 13 :weight 'light)
       ;; doom-font (font-spec :family "Iosevka" :size 14)
       ;; doom-variable-pitch-font (font-spec :family "Iosevka" :size 14)
