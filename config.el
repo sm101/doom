@@ -214,6 +214,10 @@
   :config
   (exec-path-from-shell-initialize))
 
+(when (eq system-type 'gnu/linux)
+  (after! projectile
+    (setq projectile-generic-command
+          "rg -0 --files --color=never --hidden -g!.git -g!.svn")))
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
