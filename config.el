@@ -26,7 +26,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; doom-one was default
-(setq doom-theme 'doom-oceanic-next
+(setq doom-theme 'doom-one
       doom-font (font-spec :family "JetBrains Mono" :size 13 :weight 'light)
       ;; doom-font (font-spec :family "Iosevka" :size 14)
       ;; doom-variable-pitch-font (font-spec :family "Iosevka" :size 14)
@@ -164,6 +164,29 @@
 ;;register openai, can be selected in menu
 (gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
 
+;; In support of faster remote editing, we can disable some features that are
+;; slow over TRAMP. For example, we can disable VC (version control) checks on
+;; remote files, which can significantly speed up operations when working with
+;; files over SSH or other remote protocols.
+
+;; Don't let VC (git checks) touch remote files — big speedup
+(setq remote-file-name-inhibit-cache nil
+      vc-ignore-dir-regexp (format "%s\\|%s"
+                                   vc-ignore-dir-regexp
+                                   tramp-file-name-regexp))
+
+(after! projectile
+  (setq projectile-enable-caching t
+        projectile-indexing-method 'alien
+        ;; Static modeline string — avoids remote calls on every redisplay
+        projectile-mode-line-function (lambda () " Proj")))
+
+;; projectile-find-file did not work for me on remote files on ENG_VM, with fd
+  (setq projectile-generic-command
+        "find . -type f -not -path '*/.git/*' -not -path '*/build/*' -print0"))
+
+
+
 ;; (use-package! dall-e-shell
 ;;   :config
 ;;   (setq dall-e-shell-openai-key chatgpt-shell-openai-key))
@@ -218,6 +241,15 @@
   (after! projectile
     (setq projectile-generic-command
           "rg -0 --files --color=never --hidden -g!.git -g!.svn")))
+;;; LSP over TRAMP — remote clangd
+(after! lsp-mode
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-tramp-connection "clangd")
+    :major-modes '(c-mode c++-mode)
+    :remote? t
+    :server-id 'clangd-remote)))
+
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
