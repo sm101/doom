@@ -214,6 +214,15 @@
   :config
   (exec-path-from-shell-initialize))
 
+;;; LSP over TRAMP — remote clangd
+(after! lsp-mode
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-tramp-connection "clangd")
+    :major-modes '(c-mode c++-mode)
+    :remote? t
+    :server-id 'clangd-remote)))
+
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
