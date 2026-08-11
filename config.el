@@ -165,6 +165,29 @@
 ;;register openai, can be selected in menu
 (gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
 
+;; In support of faster remote editing, we can disable some features that are
+;; slow over TRAMP. For example, we can disable VC (version control) checks on
+;; remote files, which can significantly speed up operations when working with
+;; files over SSH or other remote protocols.
+
+;; Don't let VC (git checks) touch remote files — big speedup
+(setq remote-file-name-inhibit-cache nil
+      vc-ignore-dir-regexp (format "%s\\|%s"
+                                   vc-ignore-dir-regexp
+                                   tramp-file-name-regexp))
+
+(after! projectile
+  (setq projectile-enable-caching t
+        projectile-indexing-method 'alien
+        ;; Static modeline string — avoids remote calls on every redisplay
+        projectile-mode-line-function (lambda () " Proj")))
+
+;; projectile-find-file did not work for me on remote files on ENG_VM, with fd
+  (setq projectile-generic-command
+        "find . -type f -not -path '*/.git/*' -not -path '*/build/*' -print0"))
+
+
+
 ;; (use-package! dall-e-shell
 ;;   :config
 ;;   (setq dall-e-shell-openai-key chatgpt-shell-openai-key))
