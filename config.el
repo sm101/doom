@@ -175,15 +175,15 @@
                                    vc-ignore-dir-regexp
                                    tramp-file-name-regexp))
 
-(after! projectile
-  (setq projectile-enable-caching t
-        projectile-indexing-method 'alien
-        ;; Static modeline string — avoids remote calls on every redisplay
-        projectile-mode-line-function (lambda () " Proj")))
-
-;; projectile-find-file did not work for me on remote files on ENG_VM, with fd
-  (setq projectile-generic-command
-        "find . -type f -not -path '*/.git/*' -not -path '*/build/*' -print0"))
+(when (eq system-type 'darwin)
+  (after! projectile
+    (setq projectile-enable-caching t
+          projectile-indexing-method 'alien
+          ;; Static modeline string — avoids remote calls on every redisplay
+          projectile-mode-line-function (lambda () " Proj"))
+    ;; projectile-find-file did not work for me on remote files on ENG_VM, with fd
+    (setq projectile-generic-command
+        "find . -type f -not -path '*/.git/*' -not -path '*/build/*' -print0")))
 
 
 
