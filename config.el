@@ -143,8 +143,7 @@
 (map! :after god-mode "<escape>" #'god-local-mode)
 
 ;; set clangd options and priority (in case ccls is also installed)
-(setq lsp-clients-clangd-args '("-j=3"
-                                "--background-index"
+(setq lsp-clients-clangd-args '("--background-index"
                                 "--clang-tidy"
                                 "--completion-style=detailed"
                                 "--header-insertion=never"
