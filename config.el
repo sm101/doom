@@ -224,7 +224,8 @@
                              '((jq . t)))
 
 ;; https://github.com/copilot-emacs/copilot.el
-(when (eq system-type 'darwin)
+;; darwin only, since copilot is only on my macbook, not on linux remote servers.
+(when (eq system-type 'darwin) 
   (use-package! copilot
     :hook (prog-mode . copilot-mode)
     :bind (:map copilot-completion-map
@@ -237,6 +238,7 @@
   :config
   (exec-path-from-shell-initialize))
 
+;; for some reason this was set up in config.el on ENG_VM. 
 (when (eq system-type 'gnu/linux)
   (after! projectile
     (setq projectile-generic-command
