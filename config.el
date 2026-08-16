@@ -180,7 +180,7 @@
         projectile-indexing-method 'alien
         projectile-mode-line-function (lambda () " Proj")
         projectile-generic-command
-        "find . -type f -not -path '*/.git/*' -not -path '*/build/*' -not -path '*/.cache/*' -print0"))
+           "rg -0 --files --color=never --hidden -g!.git -g!.svn -g!.cache"))
 
 ;; (use-package! dall-e-shell
 ;;   :config
