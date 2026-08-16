@@ -175,17 +175,12 @@
                                    vc-ignore-dir-regexp
                                    tramp-file-name-regexp))
 
-(when (eq system-type 'darwin)
-  (after! projectile
+(after! projectile
     (setq projectile-enable-caching t
-          projectile-indexing-method 'alien
-          ;; Static modeline string — avoids remote calls on every redisplay
-          projectile-mode-line-function (lambda () " Proj"))
-    ;; projectile-find-file did not work for me on remote files on ENG_VM, with fd
-    (setq projectile-generic-command
-        "find . -type f -not -path '*/.git/*' -not -path '*/build/*' -print0")))
-
-
+        projectile-indexing-method 'alien
+        projectile-mode-line-function (lambda () " Proj")
+        projectile-generic-command
+        "find . -type f -not -path '*/.git/*' -not -path '*/build/*' -not -path '*/.cache/*' -print0"))
 
 ;; (use-package! dall-e-shell
 ;;   :config
@@ -238,11 +233,6 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; for some reason this was set up in config.el on ENG_VM. 
-(when (eq system-type 'gnu/linux)
-  (after! projectile
-    (setq projectile-generic-command
-          "rg -0 --files --color=never --hidden -g!.git -g!.svn")))
 ;;; LSP over TRAMP — remote clangd
 (after! lsp-mode
   (lsp-register-client
