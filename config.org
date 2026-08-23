@@ -1,35 +1,6 @@
-#+TITLE: My Doom Config
+#+TITLE: Doom Config (Literate)
 #+PROPERTY: header-args :tangle yes
 #+PROPERTY: header-args:elisp :tangle yes
-
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets.
-(setq user-full-name "Stevan Markovic"
-      user-mail-address "smarkovi@akamai.com")
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
-;;
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-;; doom-one was default
 
 * Intro
 #+begin_src emacs-lisp
@@ -74,7 +45,7 @@ Load anthropic and openai API keys secrets if file exists.
   (when (file-exists-p secrets-file)
     (load secrets-file)))
 #+end_src
-** Gotel
+** gptel
 #+begin_src elisp
 ;; (use-package! chatgpt-shell)
 (use-package! gptel)
@@ -106,13 +77,10 @@ Load anthropic and openai API keys secrets if file exists.
 #+begin_src elisp
 (defvar my/org-agenda-files-work '("~/org/work")
   "Work org agenda files.")
-
 (defvar my/org-agenda-files-personal '("~/org/personal")
   "Personal org agenda files.")
-
 (defvar my/org-agenda-context 'work
   "Current org agenda context.")
-
 (defun my/toggle-org-agenda-files ()
   "Toggle between work and personal org-agenda-files."
   (interactive)
@@ -124,41 +92,38 @@ Load anthropic and openai API keys secrets if file exists.
     (setq org-agenda-files my/org-agenda-files-work)
     (setq my/org-agenda-context 'work)
     (message "Switched to work org-agenda-files")))
-
 (after! org
   (setq org-roam-directory "~/org")
   (setq org-agenda-include-diary t)
   (setq org-capture-templates
         `(("j" "Journal" entry
-          (file+olp+datetree +org-capture-journal-file)
-          "* %U %?\n%i\n%a" :prepend t))
+           (file+olp+datetree +org-capture-journal-file)
+           "* %U %?\n%i\n%a" :prepend t))
         )
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (setq org-latex-listings-options '(("breaklines" "true")))
   (setq org-latex-src-block-backend 'minted)
   (setq org-latex-pdf-process
-      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   (setq org-agenda-files my/org-agenda-files-work) 
   (setq org-agenda-custom-commands
-      '(("w" "Work Agenda"
-         ((agenda "" ((org-agenda-files my/org-agenda-files-work))
-          (tags "work-priority") )  ;; Add other custom views as needed
-         ))
-        ("p" "Personal Agenda"
-         ((agenda "" ((org-agenda-files my/org-agenda-files-personal))
-          (tags "home-priority") )  ;; Add other custom views as needed
-         ))
-        ))
-
-  )
+        '(("w" "Work Agenda"
+           ((agenda "" ((org-agenda-files my/org-agenda-files-work))
+                    (tags "work-priority") )  ;; Add other custom views as needed
+            ))  
+          ("p" "Personal Agenda"
+           ((agenda "" ((org-agenda-files my/org-agenda-files-personal))
+                    (tags "home-priority") )  ;; Add other custom views as needed
+            ))
+          ))
+)
 
 (map! :after org :map org-mode-map "C-c T" #'my/toggle-org-agenda-files)
 #+end_src
 
 * Tramp
-Add gwsh.
-** TODO remove tramp-debug-to-file
+Add gwsh (todo: remove tramp-debug-to-file)
 
 #+begin_src elisp
 (after! tramp
@@ -167,19 +132,17 @@ Add gwsh.
   (tramp-login-program "gwsh")
   (tramp-login-args
     (
-      ("-l" "testgrp")
-     ;; ("-p" "%p")
+     ("-l" "testgrp")
      ("%c")
-;; ("-e" "none")
      ("%h")))
-   (tramp-async-args
-    (("-q")))
-   (tramp-direct-async t)
-   (tramp-remote-shell "/bin/sh")
-   (tramp-remote-shell-login
-    ("-l"))
-   (tramp-remote-shell-args
-    ("-c"))))
+  (tramp-async-args
+   (("-q")))
+  (tramp-direct-async t)
+  (tramp-remote-shell "/bin/sh")
+  (tramp-remote-shell-login
+   ("-l"))
+  (tramp-remote-shell-args
+   ("-c"))))
   (setq tramp-debug-to-file t))
 #+end_src
 
@@ -187,7 +150,6 @@ Add gwsh.
 #+begin_src elisp
 ;; Python formatter.
 (use-package! yapfify)
-
 (yas-global-mode 1)
 (add-hook `yas-minor-mode-hook (lambda () (yas-activate-extra-mode 'fundamental-mode)))
 #+end_src
@@ -318,8 +280,10 @@ Add Serbian language in addition to default
 #+end_src
 * Company, combine English and Serbian
 You need to install hunspell and to download English and Serbian dictionaries to ~/Library/Spelling.
-English https://wordlist.aspell.net/dicts/
-Serbian https://github.com/grakic/hyphen-sr
+
+English -> https://wordlist.aspell.net/dicts/
+
+Serbian -> https://github.com/grakic/hyphen-sra
 
 #+begin_src elisp
 (defun my/ensure-combined-dictionary ()
@@ -346,7 +310,7 @@ Serbian https://github.com/grakic/hyphen-sr
   (setq company-ispell-dictionary (my/ensure-combined-dictionary)))
 #+end_src
 
-
+#+begin_example
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
@@ -363,3 +327,5 @@ Serbian https://github.com/grakic/hyphen-sr
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+#+end_example
+
