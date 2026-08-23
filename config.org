@@ -278,32 +278,29 @@ Add Serbian language in addition to default
             (lambda ()
               (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "sr-Latn")))))
 #+end_src
-* Company, combine English and Serbian
-You need to install hunspell and to download English and Serbian dictionaries to ~/Library/Spelling.
-
-English -> https://wordlist.aspell.net/dicts/
-
-Serbian -> https://github.com/grakic/hyphen-sra
+* Company, combine English and Serbian Latin
+Uses aspell (install via =brew install aspell=) to dump word lists for =en= and =sr-latn=.
+No dictionary files to download manually; aspell resolves its own data directory.
+The combined list is generated once and cached in =doom-data-dir=.
 
 #+begin_src elisp
 (defun my/ensure-combined-dictionary ()
-  "Generate combined EN+SR dictionary if it doesn't exist."
+  "Generate combined EN+SR-Latin word list using aspell.
+Dumps dictionaries via aspell at first use; result cached in `doom-data-dir'."
   (let* ((dict-dir (expand-file-name "dicts" doom-data-dir))
-         (combined (expand-file-name "combined-words.txt" dict-dir))
-         (hunspell-dir (expand-file-name "~/Library/Spelling"))
-         (en-dic (expand-file-name "en_US.dic" hunspell-dir))
-         (sr-dic (expand-file-name "sr-Latn.dic" hunspell-dir)))
+         (combined (expand-file-name "aspell-combined.txt" dict-dir))
+         (aspell (executable-find "aspell")))
     (unless (file-exists-p combined)
+      (unless aspell
+        (user-error "aspell not found; install it with: brew install aspell"))
       (make-directory dict-dir t)
-      (message "Generating combined dictionary...")
-      (shell-command
-       (format "tail -n +2 %s | sed 's|/.*||' > /tmp/en.txt && \
-                tail -n +2 %s | sed 's|/.*||' > /tmp/sr.txt && \
-                cat /tmp/en.txt /tmp/sr.txt | sort -u > %s"
-               (shell-quote-argument en-dic)
-               (shell-quote-argument sr-dic)
-               (shell-quote-argument combined)))
-      (message "Combined dictionary generated at %s" combined))
+      (message "Generating combined dictionary via aspell (en + sr-latn)...")
+      (with-temp-buffer
+        (dolist (lang '("en" "sr-latn"))
+          (call-process aspell nil '(t nil) nil "-d" lang "dump" "master"))
+        (call-process-region (point-min) (point-max) "sort" t t nil "-u")
+        (write-region (point-min) (point-max) combined))
+      (message "Combined dictionary written to %s" combined))
     combined))
 
 (after! company
