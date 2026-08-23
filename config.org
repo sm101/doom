@@ -288,19 +288,22 @@ The combined file is generated on first spell-fu activation and cached in =doom-
 
 #+begin_src elisp
 (defun my/ensure-combined-dictionary ()
-  "Combine spell-fu's EN and SR-Latin word lists for company-ispell.
-Uses spell-fu's own API to locate word list files; no hardcoded paths."
+  "Combine all active spell-fu word lists for company-ispell.
+Derives file paths from spell-fu-dictionaries — no hardcoded dictionary names."
   (let* ((dict-dir (expand-file-name "dicts" doom-data-dir))
          (combined (expand-file-name "combined-words.txt" dict-dir))
-         (en-file (spell-fu--words-file (spell-fu-get-ispell-dictionary "default")))
-         (sr-file (spell-fu--words-file (spell-fu-get-ispell-dictionary "sr-Latn"))))
-    (when (and (file-exists-p en-file) (file-exists-p sr-file))
+         (word-files (delq nil
+                           (mapcar (lambda (dict)
+                                     (let ((f (spell-fu--words-file dict)))
+                                       (when (file-exists-p f) f)))
+                                   spell-fu-dictionaries))))
+    (when word-files
       (unless (file-exists-p combined)
         (make-directory dict-dir t)
         (with-temp-buffer
-          (insert-file-contents en-file)
-          (goto-char (point-max))
-          (insert-file-contents sr-file)
+          (dolist (f word-files)
+            (insert-file-contents f)
+            (goto-char (point-max)))
           (call-process-region (point-min) (point-max) "sort" t t nil "-u")
           (write-region (point-min) (point-max) combined)))
       combined)))
@@ -308,7 +311,8 @@ Uses spell-fu's own API to locate word list files; no hardcoded paths."
 (after! (spell-fu company)
   (add-hook 'spell-fu-mode-hook
             (lambda ()
-              (setq company-ispell-dictionary (my/ensure-combined-dictionary)))))
+              (setq company-ispell-dictionary (my/ensure-combined-dictionary)))
+            t))  ; append — must run after the sr-Latn dictionary hook adds its entry
 #+end_src
 
 #+begin_example
