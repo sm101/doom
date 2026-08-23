@@ -1,0 +1,365 @@
+#+TITLE: My Doom Config
+#+PROPERTY: header-args :tangle yes
+#+PROPERTY: header-args:elisp :tangle yes
+
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+;; Place your private configuration here! Remember, you do not need to run 'doom
+;; sync' after modifying this file!
+
+
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets.
+(setq user-full-name "Stevan Markovic"
+      user-mail-address "smarkovi@akamai.com")
+
+;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
+;; are the three important ones:
+;;
+;; + `doom-font'
+;; + `doom-variable-pitch-font'
+;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;;
+;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+;; font string. You generally only need these two:
+;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
+;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+;; doom-one was default
+
+* Intro
+#+begin_src emacs-lisp
+;;; config.el --- -*- lexical-binding: t; -*-
+(setq user-full-name "Stevan Markovic"
+      user-mail-address "smarkovi@akamai.com")
+#+end_src
+
+* UI Settings
+Doom theme and fonts
+#+begin_src elisp
+(setq doom-theme 'doom-one
+      doom-font (font-spec :family "JetBrains Mono" :size 13 :weight 'light)
+      ;; doom-font (font-spec :family "Iosevka" :size 14)
+      ;; doom-variable-pitch-font (font-spec :family "Iosevka" :size 14)
+      ;; doom-big-font (font-spec :family "Iosevka" :size 20)
+      )
+#+end_src
+
+Frame size
+#+begin_src elisp
+;; Frame size
+(add-to-list 'default-frame-alist '(fullscreen . fullheight))
+(add-to-list 'default-frame-alist '(width . 145))
+(add-to-list 'default-frame-alist '(top . 5))
+(add-to-list 'default-frame-alist '(left . 5))
+#+end_src
+No line numbers
+#+begin_src elisp
+(setq display-line-numbers-type nil)
+#+end_src
+
+* Tweaks
+Smartparens remap org-demote, org-promote keys M-LEFT SHIFT and M-RIGHT SHIFT
+#+begin_src elisp
+(remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
+#+end_src
+* AI 
+Load anthropic and openai API keys secrets if file exists.
+#+begin_src elisp
+(let ((secrets-file (doom-path doom-user-dir "secrets.el")))
+  (when (file-exists-p secrets-file)
+    (load secrets-file)))
+#+end_src
+** Gotel
+#+begin_src elisp
+;; (use-package! chatgpt-shell)
+(use-package! gptel)
+ 
+;; set default backend and model. 
+(setq gptel-model 'claude-opus-4-6
+      gptel-backend (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
+;;register openai, can be selected in menu
+(gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
+#+end_src
+** Translator
+#+begin_src elisp
+(use-package! gt)
+(setq gt-langs '(en es sr))
+(setq gt-default-translator (gt-translator :engines (gt-google-engine)
+                                           :taker (gt-taker :prompt t :text 'paragraph)
+                                           :render (gt-insert-render)))
+#+end_src
+
+* Org mode
+#+begin_src elisp
+(setq org-directory "~/org/")
+(setq org-log-done 'time)
+#+end_src
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+
+** Agendas
+#+begin_src elisp
+(defvar my/org-agenda-files-work '("~/org/work")
+  "Work org agenda files.")
+
+(defvar my/org-agenda-files-personal '("~/org/personal")
+  "Personal org agenda files.")
+
+(defvar my/org-agenda-context 'work
+  "Current org agenda context.")
+
+(defun my/toggle-org-agenda-files ()
+  "Toggle between work and personal org-agenda-files."
+  (interactive)
+  (if (eq my/org-agenda-context 'work)
+      (progn
+        (setq org-agenda-files my/org-agenda-files-personal)
+        (setq my/org-agenda-context 'personal)
+        (message "Switched to personal org-agenda-files"))
+    (setq org-agenda-files my/org-agenda-files-work)
+    (setq my/org-agenda-context 'work)
+    (message "Switched to work org-agenda-files")))
+
+(after! org
+  (setq org-roam-directory "~/org")
+  (setq org-agenda-include-diary t)
+  (setq org-capture-templates
+        `(("j" "Journal" entry
+          (file+olp+datetree +org-capture-journal-file)
+          "* %U %?\n%i\n%a" :prepend t))
+        )
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-listings-options '(("breaklines" "true")))
+  (setq org-latex-src-block-backend 'minted)
+  (setq org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  (setq org-agenda-files my/org-agenda-files-work) 
+  (setq org-agenda-custom-commands
+      '(("w" "Work Agenda"
+         ((agenda "" ((org-agenda-files my/org-agenda-files-work))
+          (tags "work-priority") )  ;; Add other custom views as needed
+         ))
+        ("p" "Personal Agenda"
+         ((agenda "" ((org-agenda-files my/org-agenda-files-personal))
+          (tags "home-priority") )  ;; Add other custom views as needed
+         ))
+        ))
+
+  )
+
+(map! :after org :map org-mode-map "C-c T" #'my/toggle-org-agenda-files)
+#+end_src
+
+* Tramp
+Add gwsh.
+** TODO remove tramp-debug-to-file
+
+#+begin_src elisp
+(after! tramp
+  (add-to-list 'tramp-methods
+ '("gwsh"
+  (tramp-login-program "gwsh")
+  (tramp-login-args
+    (
+      ("-l" "testgrp")
+     ;; ("-p" "%p")
+     ("%c")
+;; ("-e" "none")
+     ("%h")))
+   (tramp-async-args
+    (("-q")))
+   (tramp-direct-async t)
+   (tramp-remote-shell "/bin/sh")
+   (tramp-remote-shell-login
+    ("-l"))
+   (tramp-remote-shell-args
+    ("-c"))))
+  (setq tramp-debug-to-file t))
+#+end_src
+
+* Misc
+#+begin_src elisp
+;; Python formatter.
+(use-package! yapfify)
+
+(yas-global-mode 1)
+(add-hook `yas-minor-mode-hook (lambda () (yas-activate-extra-mode 'fundamental-mode)))
+#+end_src
+
+* Google protobuf editing
+#+begin_src elisp
+;;;
+;;; Protocol buffers mode
+;;; (use-package! protobuf-mode)
+#+end_src
+
+* God mode tweak
+#+begin_src elisp
+;; Map key <escape> but _only_ after god-mode is initialized.
+(map! :after god-mode "<escape>" #'god-local-mode)
+#+end_src
+* LSP and Clangd 
+#+begin_src elisp
+;; set clangd options and priority (in case ccls is also installed)
+(setq lsp-clients-clangd-args '("--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"
+                                "--header-insertion-decorators=0"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
+#+end_src
+
+** clangd over tramp
+#+begin_src elisp
+;;; LSP over TRAMP — remote clangd
+(after! lsp-mode
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-tramp-connection "clangd")
+    :major-modes '(c-mode c++-mode)
+    :remote? t
+    :server-id 'clangd-remote)))
+#+end_src
+
+** Speed optimizations and projectile settings
+#+begin_src elisp
+;; In support of faster remote editing, we can disable some features that are
+;; slow over TRAMP. For example, we can disable VC (version control) checks on
+;; remote files, which can significantly speed up operations when working with
+;; files over SSH or other remote protocols.
+
+;; Don't let VC (git checks) touch remote files — big speedup
+(setq remote-file-name-inhibit-cache nil
+      vc-ignore-dir-regexp (format "%s\\|%s"
+                                   vc-ignore-dir-regexp
+                                   tramp-file-name-regexp))
+
+(after! projectile
+    (setq projectile-enable-caching t
+        projectile-indexing-method 'alien
+        projectile-mode-line-function (lambda () " Proj")
+        projectile-generic-command
+           "rg -0 --files --color=never --hidden -g!.git -g!.svn -g!.cache"))
+
+#+end_src
+
+* Email
+;; (use-package! dall-e-shell
+;;   :config
+;;   (setq dall-e-shell-openai-key chatgpt-shell-openai-key))
+
+;; (if (string-equal (system-name) "fll-mpmn2")
+;; mu4 settings
+;; (add-to-list 'load-path "/opt/homebrew/Cellar/mu/1.12.9/share/emacs/site-lisp/mu/mue4")
+#+begin_src elisp
+(set-email-account! "Stevan Akamai"
+                    '((mu4e-sent-folder       . "/Sent Items")
+                      (mu4e-drafts-folder     . "/Drafts")
+                      (mu4e-trash-folder      . "/Deleted items"))
+                    t)
+(setq +mu4e-backend 'offlineimap)
+
+(after! mu4e
+  (setq sendmail-program (executable-find "msmtp")
+        send-mail-function #'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function #'message-send-mail-with-sendmail
+        mu4e-update-interval 15)
+  )
+
+(setq
+ smtpmail-default-smtp-server "smtp.akamai.com"
+ smtpmail-smtp-server         "smtp.akamai.com"
+ smtpmail-local-domain        "akamai.com")
+
+;; Setup motmuch
+(setq notmuch-backend 'offlineimap)
+(setq +notmuch-sync-backend 'offlineimap)
+#+end_src
+* Babel support for jq programs
+#+begin_src elisp
+(org-babel-do-load-languages 'org-babel-load-languages
+                             '((jq . t)))
+#+end_src
+* Copilot (on my macbook only)
+#+begin_src elisp
+;; https://github.com/copilot-emacs/copilot.el
+;; darwin only, since copilot is only on my macbook, not on linux remote servers.
+(when (eq system-type 'darwin) 
+  (use-package! copilot
+    :hook (prog-mode . copilot-mode)
+    :bind (:map copilot-completion-map
+                ("<tab>" . 'copilot-accept-completion)
+                ("TAB" . 'copilot-accept-completion)
+                ("C-TAB" . 'copilot-accept-completion-by-word)
+                ("C-<tab>" . 'copilot-accept-completion-by-word))))
+#+end_src
+* Set path from shell
+#+begin_src elisp
+(use-package! exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
+#+end_src
+
+* Spell-fu
+Add Serbian language in addition to default
+#+begin_src elisp
+(after! spell-fu
+  (add-hook 'spell-fu-mode-hook
+            (lambda ()
+              (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "sr-Latn")))))
+#+end_src
+* Company, combine English and Serbian
+You need to install hunspell and to download English and Serbian dictionaries to ~/Library/Spelling.
+English https://wordlist.aspell.net/dicts/
+Serbian https://github.com/grakic/hyphen-sr
+
+#+begin_src elisp
+(defun my/ensure-combined-dictionary ()
+  "Generate combined EN+SR dictionary if it doesn't exist."
+  (let* ((dict-dir (expand-file-name "dicts" doom-data-dir))
+         (combined (expand-file-name "combined-words.txt" dict-dir))
+         (hunspell-dir (expand-file-name "~/Library/Spelling"))
+         (en-dic (expand-file-name "en_US.dic" hunspell-dir))
+         (sr-dic (expand-file-name "sr-Latn.dic" hunspell-dir)))
+    (unless (file-exists-p combined)
+      (make-directory dict-dir t)
+      (message "Generating combined dictionary...")
+      (shell-command
+       (format "tail -n +2 %s | sed 's|/.*||' > /tmp/en.txt && \
+                tail -n +2 %s | sed 's|/.*||' > /tmp/sr.txt && \
+                cat /tmp/en.txt /tmp/sr.txt | sort -u > %s"
+               (shell-quote-argument en-dic)
+               (shell-quote-argument sr-dic)
+               (shell-quote-argument combined)))
+      (message "Combined dictionary generated at %s" combined))
+    combined))
+
+(after! company
+  (setq company-ispell-dictionary (my/ensure-combined-dictionary)))
+#+end_src
+
+
+;; Here are some additional functions/macros that could help you configure Doom:
+;;
+;; - `load!' for loading external *.el files relative to this one
+;; - `use-package!' for configuring packages
+;; - `after!' for running code after a package has loaded
+;; - `add-load-path!' for adding directories to the `load-path', relative to
+;;   this file. Emacs searches the `load-path' when you load packages with
+;;   `require' or `use-package'.
+;; - `map!' for binding new keys
+;;
+;; To get information about any of these functions/macros, move the cursor over
+;; the highlighted s    ymbol at press 'K' (non-evil users must press 'C-c c k').
+;; This will open documentation for it, including demos of how they are used.
+;;
+;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; they are implemented.
