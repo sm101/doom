@@ -96,6 +96,7 @@
        (lookup +dictionary); navigate your code and its documentation
        lsp
        magit             ; a git porcelain for Emacs
+       tree-sitter  
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
@@ -112,7 +113,7 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       (cc +lsp)           ; C/C++/Obj-C madness
+       (cc +lsp +tree-sitter)
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
