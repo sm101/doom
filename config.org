@@ -271,7 +271,9 @@ Add gwsh (todo: remove tramp-debug-to-file)
 #+end_src
 
 * Spell-fu
-Add Serbian language in addition to default
+Add Serbian language in addition to default.
+spell-fu builds word frequency lists from aspell dictionaries and caches them in
+=~/.config/emacs/.local/etc/spell-fu/=. Delete the files there to force a rebuild.
 #+begin_src elisp
 (after! spell-fu
   (add-hook 'spell-fu-mode-hook
