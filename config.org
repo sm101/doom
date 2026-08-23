@@ -20,6 +20,12 @@ Doom theme and fonts
       )
 #+end_src
 
+tree-sitter introduces =font-lock-function-call-face=; doom-one renders it italic by default.
+#+begin_src elisp
+(custom-set-faces!
+  '(font-lock-function-call-face :slant normal))
+#+end_src
+
 Frame size
 #+begin_src elisp
 ;; Frame size
