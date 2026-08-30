@@ -172,9 +172,13 @@ Add gwsh (todo: remove tramp-debug-to-file)
 ;; Map key <escape> but _only_ after god-mode is initialized.
 (map! :after god-mode "<escape>" #'god-local-mode)
 #+end_src
-* LSP and Clangd 
+* Clangd (lsp-mode and eglot)
+Switch between backends in =init.el= via =(lsp)= vs =(lsp +eglot)=.
+Each =after!= block only fires when its package actually loads, so both can
+coexist safely.
+
+** lsp-mode
 #+begin_src elisp
-;; set clangd options and priority (in case ccls is also installed)
 (setq lsp-clients-clangd-args '("--background-index"
                                 "--clang-tidy"
                                 "--completion-style=detailed"
@@ -183,9 +187,8 @@ Add gwsh (todo: remove tramp-debug-to-file)
 (after! lsp-clangd (set-lsp-priority! 'clangd 2))
 #+end_src
 
-** clangd over tramp
+*** clangd over tramp
 #+begin_src elisp
-;;; LSP over TRAMP — remote clangd
 (after! lsp-mode
   (lsp-register-client
    (make-lsp-client
@@ -194,6 +197,27 @@ Add gwsh (todo: remove tramp-debug-to-file)
     :remote? t
     :server-id 'clangd-remote)))
 #+end_src
+
+** eglot
+#+begin_src elisp
+(after! eglot
+  (add-to-list 'eglot-server-programs
+               '((c-mode c++-mode c-ts-mode c++-ts-mode)
+                 "clangd"
+                 "--background-index"
+                 "--clang-tidy"
+                 "--completion-style=detailed"
+                 "--header-insertion=never"
+                 "--header-insertion-decorators=0"))
+  (setq eglot-connect-timeout 60))
+#+end_src
+
+*** clangd over tramp
+Eglot detects tramp paths automatically and runs clangd on the remote host
+via the existing tramp connection — no explicit client registration needed.
+If clangd is at a non-default path on a specific host, use
+=connection-local-set-profile-variables= / =connection-local-set-profiles= to
+override =eglot-server-programs= per machine.
 
 ** Speed optimizations and projectile settings
 #+begin_src elisp

@@ -94,7 +94,8 @@
        ;; (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        (lookup +dictionary); navigate your code and its documentation
-       lsp
+       (lsp +eglot)
+       ;; lsp              ; for lsp-mode instead of eglot
        magit             ; a git porcelain for Emacs
        tree-sitter  
        ;;make              ; run make tasks from Emacs
