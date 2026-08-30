@@ -219,6 +219,17 @@ If clangd is at a non-default path on a specific host, use
 =connection-local-set-profile-variables= / =connection-local-set-profiles= to
 override =eglot-server-programs= per machine.
 
+* Consult
+Over tramp, every ripgrep invocation pays SSH round-trip overhead. These settings
+debounce input so consult waits for a typing pause before firing, closer to ivy's
+feel over a slow connection.
+#+begin_src elisp
+(after! consult
+  (setq consult-async-min-input 4
+        consult-async-refresh-delay 0.5
+        consult-async-input-debounce 0.3))
+#+end_src
+
 ** Speed optimizations and projectile settings
 #+begin_src elisp
 ;; In support of faster remote editing, we can disable some features that are
@@ -310,40 +321,6 @@ spell-fu builds word frequency lists from aspell dictionaries and caches them in
             (lambda ()
               (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "sr-Latn"))
               (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "es")))))
-#+end_src
-* Company, combine English and Serbian Latin
-spell-fu already builds and caches word lists from the ispell dictionaries (see above).
-We simply combine those cached =.txt= files rather than invoking aspell again.
-No direct aspell dependency here — any ispell-compatible backend works.
-The combined file is generated on first spell-fu activation and cached in =doom-data-dir=.
-
-#+begin_src elisp
-(defun my/ensure-combined-dictionary ()
-  "Combine all active spell-fu word lists for company-ispell.
-Derives file paths from spell-fu-dictionaries — no hardcoded dictionary names."
-  (let* ((dict-dir (expand-file-name "dicts" doom-data-dir))
-         (combined (expand-file-name "combined-words.txt" dict-dir))
-         (word-files (delq nil
-                           (mapcar (lambda (dict)
-                                     (let ((f (spell-fu--words-file dict)))
-                                       (when (file-exists-p f) f)))
-                                   spell-fu-dictionaries))))
-    (when word-files
-      (unless (file-exists-p combined)
-        (make-directory dict-dir t)
-        (with-temp-buffer
-          (dolist (f word-files)
-            (insert-file-contents f)
-            (goto-char (point-max)))
-          (call-process-region (point-min) (point-max) "sort" t t nil "-u")
-          (write-region (point-min) (point-max) combined)))
-      combined)))
-
-(after! (spell-fu company)
-  (add-hook 'spell-fu-mode-hook
-            (lambda ()
-              (setq company-ispell-dictionary (my/ensure-combined-dictionary)))
-            t))  ; append — must run after the sr-Latn dictionary hook adds its entry
 #+end_src
 
 #+begin_example

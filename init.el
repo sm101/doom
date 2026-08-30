@@ -20,11 +20,10 @@
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       company           ; the ultimate code completion backend
+       (corfu +orderless +dabbrev +icons)
        ;; helm              ; the *other* search engine for love and life
        ;;ido             ; the other *other* search engine...
-       ivy             ; a search engine for love and life
-       ;; xvertico
+       vertico
 
        :ui
        ;; deft              ; notational velocity for Emacs
@@ -94,6 +93,7 @@
        ;; (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        (lookup +dictionary); navigate your code and its documentation
+       consult
        (lsp +eglot)
        ;; lsp              ; for lsp-mode instead of eglot
        magit             ; a git porcelain for Emacs
