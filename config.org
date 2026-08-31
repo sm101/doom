@@ -369,6 +369,19 @@ Override per buffer via file-local variables, e.g.:
                 (when-let (dict (my/build-cape-dictionary))
                   (setq-local cape-dict-file dict)
                   (add-hook 'completion-at-point-functions #'cape-dict nil t))))))
+
+;; ispell-completion-at-point duplicates what cape-dict already provides but
+;; ignores my/dict-languages, always completing from the global ispell dictionary
+;; (English by default). This causes English words to appear in non-English
+;; buffers even when cape-dict-file is set to a language-specific word list.
+;; Removed in hack-local-variables-hook (not with-eval-after-load) because mode
+;; hooks add it after ispell loads, so earlier removal has no effect.
+(after! spell-fu
+  (add-hook 'hack-local-variables-hook
+            (lambda ()
+              (when (derived-mode-p 'text-mode)
+                (remove-hook 'completion-at-point-functions
+                             #'ispell-completion-at-point t)))))
 #+end_src
 
 #+begin_example
