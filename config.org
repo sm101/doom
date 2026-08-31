@@ -343,7 +343,8 @@ Override per buffer via file-local variables, e.g.:
           (dolist (f word-files)
             (insert-file-contents f)
             (goto-char (point-max)))
-          (call-process-region (point-min) (point-max) "sort" t t nil "-u")
+          (let ((process-environment (cons "LC_ALL=C" process-environment)))
+            (call-process-region (point-min) (point-max) "sort" t t nil "-u"))
           (write-region (point-min) (point-max) combined)))
       combined)))
 
@@ -357,7 +358,11 @@ Override per buffer via file-local variables, e.g.:
                   (unless (string= lang "en")
                     (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary lang))))))))
 
-(after! (spell-fu cape)
+;; after! spell-fu only (not cape): cape loads lazily on first completion trigger,
+;; so after! (spell-fu cape) would miss the hook on the first buffer visit after a
+;; fresh Emacs start. If the combined dict file is not auto-created, call
+;; (my/build-cape-dictionary) manually, then revert the buffer.
+(after! spell-fu
   (add-hook 'hack-local-variables-hook
             (lambda ()
               (when (derived-mode-p 'text-mode)
