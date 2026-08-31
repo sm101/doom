@@ -311,16 +311,59 @@ feel over a slow connection.
   (exec-path-from-shell-initialize))
 #+end_src
 
-* Spell-fu
-Add Serbian language in addition to default.
+* Spell-fu and Cape dictionary
 spell-fu builds word frequency lists from aspell dictionaries and caches them in
 =~/.config/emacs/.local/etc/spell-fu/=. Delete the files there to force a rebuild.
+
+A single buffer-local variable =my/dict-languages= controls both spell-fu and
+=cape-dict=. Default is English only. Set it via file-local variables to add
+Serbian (="sr-Latn"=) or Spanish (="es"=) in specific buffers.
 #+begin_src elisp
+(defvar-local my/dict-languages '("en")
+  "Languages for spell-fu and cape-dict. Default is English only.
+Override per buffer via file-local variables, e.g.:
+  my/dict-languages: (\"en\" \"sr-Latn\")")
+(put 'my/dict-languages 'safe-local-variable #'listp)
+
+(defun my/build-cape-dictionary ()
+  "Build or return cached combined word list for languages in my/dict-languages."
+  (let* ((key (string-join (sort (copy-sequence my/dict-languages) #'string<) "-"))
+         (dict-dir (expand-file-name "dicts" doom-data-dir))
+         (combined (expand-file-name (format "words-%s.txt" key) dict-dir))
+         (word-files (delq nil
+                           (mapcar (lambda (lang)
+                                     (let* ((dict (spell-fu-get-ispell-dictionary lang))
+                                            (f (spell-fu--words-file dict)))
+                                       (when (file-exists-p f) f)))
+                                   my/dict-languages))))
+    (when word-files
+      (unless (file-exists-p combined)
+        (make-directory dict-dir t)
+        (with-temp-buffer
+          (dolist (f word-files)
+            (insert-file-contents f)
+            (goto-char (point-max)))
+          (call-process-region (point-min) (point-max) "sort" t t nil "-u")
+          (write-region (point-min) (point-max) combined)))
+      combined)))
+
+;; Use hack-local-variables-hook so my/dict-languages is read after file-local
+;; variables are applied — mode hooks fire before that, so they see the default.
 (after! spell-fu
-  (add-hook 'spell-fu-mode-hook
+  (add-hook 'hack-local-variables-hook
             (lambda ()
-              (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "sr-Latn"))
-              (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "es")))))
+              (when spell-fu-mode
+                (dolist (lang my/dict-languages)
+                  (unless (string= lang "en")
+                    (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary lang))))))))
+
+(after! (spell-fu cape)
+  (add-hook 'hack-local-variables-hook
+            (lambda ()
+              (when (derived-mode-p 'text-mode)
+                (when-let (dict (my/build-cape-dictionary))
+                  (setq-local cape-dict-file dict)
+                  (add-hook 'completion-at-point-functions #'cape-dict nil t))))))
 #+end_src
 
 #+begin_example
