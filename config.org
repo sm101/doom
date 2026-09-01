@@ -156,7 +156,10 @@ Add gwsh (todo: remove tramp-debug-to-file)
    ("-l"))
   (tramp-remote-shell-args
    ("-c"))))
-  (setq tramp-debug-to-file t))
+  (setq tramp-debug-to-file t)
+  ;; Include the remote shell's $PATH so pip-installed tools (e.g. in
+  ;; ~/.local/bin) are visible to eglot language servers over tramp.
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+end_src
 
 * Misc
