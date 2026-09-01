@@ -20,6 +20,13 @@ Doom theme and fonts
       )
 #+end_src
 
+Display time but not load average
+#+begin_src elisp
+(after! doom-modeline
+  (setq display-time-default-load-average nil)
+  (setq doom-modeline-time t)
+  (display-time-mode 1))
+#+end_src
 tree-sitter introduces =font-lock-function-call-face=; doom-one renders it italic by default.
 #+begin_src elisp
 (custom-set-faces!
