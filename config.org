@@ -342,11 +342,14 @@ Override per buffer via file-local variables, e.g.:
          (combined (expand-file-name (format "words-%s.txt" key) dict-dir))
          (word-files (delq nil
                            (mapcar (lambda (lang)
-                                     (let* ((dict (spell-fu-get-ispell-dictionary lang))
+                                     ;; spell-fu registers English as "default" (line 385 of spell-fu.el:
+                                     ;; `(or ispell-local-dictionary ispell-dictionary "default")`).
+                                     (let* ((dict (spell-fu-get-ispell-dictionary
+                                                   (if (string= lang "en") "default" lang)))
                                             (f (spell-fu--words-file dict)))
                                        (when (file-exists-p f) f)))
                                    my/dict-languages))))
-    (when word-files
+    (when (= (length word-files) (length my/dict-languages))
       (unless (file-exists-p combined)
         (make-directory dict-dir t)
         (with-temp-buffer

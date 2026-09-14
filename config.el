@@ -1,31 +1,7 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets.
+;;; config.el --- -*- lexical-binding: t; -*-
 (setq user-full-name "Stevan Markovic"
       user-mail-address "smarkovi@akamai.com")
 
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
-;;
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-;; doom-one was default
 (setq doom-theme 'doom-one
       doom-font (font-spec :family "JetBrains Mono" :size 13 :weight 'light)
       ;; doom-font (font-spec :family "Iosevka" :size 14)
@@ -33,31 +9,57 @@
       ;; doom-big-font (font-spec :family "Iosevka" :size 20)
       )
 
-;; (setq doom-theme 'doom-one
-;;       doom-font (font-spec :family "Source Code Pro" :size 12 :weight 'light))
+(after! doom-modeline
+  (setq display-time-default-load-average nil)
+  (setq doom-modeline-time t)
+  (display-time-mode 1))
 
-;; smartparens remap org-demote, org-promote keys M-LEFT SHIFT and M-RIGHT SHIFT
+(custom-set-faces!
+  '(font-lock-function-call-face :slant normal))
+
+;; Frame size
+(add-to-list 'default-frame-alist '(fullscreen . fullheight))
+(add-to-list 'default-frame-alist '(width . 145))
+(add-to-list 'default-frame-alist '(top . 5))
+(add-to-list 'default-frame-alist '(left . 5))
+
+(setq display-line-numbers-type nil)
+
 (remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
-(setq org-log-done 'time)
-
-;; Load secrets if file exists
 (let ((secrets-file (doom-path doom-user-dir "secrets.el")))
   (when (file-exists-p secrets-file)
     (load secrets-file)))
 
+;; (use-package! chatgpt-shell)
+(use-package! gptel)
+ 
+;; set default backend and model. 
+(setq gptel-model 'claude-opus-4-6
+      gptel-backend (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
+
+(gptel-make-xai "xAI" 
+  :stream t
+  :key xAi-key)
+
+;;register openai, can be selected in menu
+(gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
+
+(use-package! gt)
+(setq gt-langs '(en es sr))
+(setq gt-default-translator (gt-translator :engines (gt-google-engine)
+                                           :taker (gt-taker :prompt t :text 'paragraph)
+                                           :render (gt-insert-render)))
+
+(setq org-directory "~/org/")
+(setq org-log-done 'time)
+
 (defvar my/org-agenda-files-work '("~/org/work")
   "Work org agenda files.")
-
 (defvar my/org-agenda-files-personal '("~/org/personal")
   "Personal org agenda files.")
-
 (defvar my/org-agenda-context 'work
   "Current org agenda context.")
-
 (defun my/toggle-org-agenda-files ()
   "Toggle between work and personal org-agenda-files."
   (interactive)
@@ -69,34 +71,32 @@
     (setq org-agenda-files my/org-agenda-files-work)
     (setq my/org-agenda-context 'work)
     (message "Switched to work org-agenda-files")))
-
 (after! org
   (setq org-roam-directory "~/org")
   (setq org-agenda-include-diary t)
   (setq org-capture-templates
         `(("j" "Journal" entry
-          (file+olp+datetree +org-capture-journal-file)
-          "* %U %?\n%i\n%a" :prepend t))
+           (file+olp+datetree +org-capture-journal-file)
+           "* %U %?\n%i\n%a" :prepend t))
         )
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (setq org-latex-listings-options '(("breaklines" "true")))
   (setq org-latex-src-block-backend 'minted)
   (setq org-latex-pdf-process
-      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   (setq org-agenda-files my/org-agenda-files-work) 
   (setq org-agenda-custom-commands
-      '(("w" "Work Agenda"
-         ((agenda "" ((org-agenda-files my/org-agenda-files-work))
-          (tags "work-priority") )  ;; Add other custom views as needed
-         ))
-        ("p" "Personal Agenda"
-         ((agenda "" ((org-agenda-files my/org-agenda-files-personal))
-          (tags "home-priority") )  ;; Add other custom views as needed
-         ))
-        ))
-
-  )
+        '(("w" "Work Agenda"
+           ((agenda "" ((org-agenda-files my/org-agenda-files-work))
+                    (tags "work-priority") )  ;; Add other custom views as needed
+            ))  
+          ("p" "Personal Agenda"
+           ((agenda "" ((org-agenda-files my/org-agenda-files-personal))
+                    (tags "home-priority") )  ;; Add other custom views as needed
+            ))
+          ))
+)
 
 (map! :after org :map org-mode-map "C-c T" #'my/toggle-org-agenda-files)
 
@@ -106,43 +106,34 @@
   (tramp-login-program "gwsh")
   (tramp-login-args
     (
-      ("-l" "testgrp")
-     ;; ("-p" "%p")
+     ("-l" "testgrp")
      ("%c")
-;; ("-e" "none")
      ("%h")))
-   (tramp-async-args
-    (("-q")))
-   (tramp-direct-async t)
-   (tramp-remote-shell "/bin/sh")
-   (tramp-remote-shell-login
-    ("-l"))
-   (tramp-remote-shell-args
-    ("-c"))))
-  (setq tramp-debug-to-file t))
-
+  (tramp-async-args
+   (("-q")))
+  (tramp-direct-async t)
+  (tramp-remote-shell "/bin/sh")
+  (tramp-remote-shell-login
+   ("-l"))
+  (tramp-remote-shell-args
+   ("-c"))))
+  (setq tramp-debug-to-file t)
+  ;; Include the remote shell's $PATH so pip-installed tools (e.g. in
+  ;; ~/.local/bin) are visible to eglot language servers over tramp.
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 ;; Python formatter.
 (use-package! yapfify)
-
 (yas-global-mode 1)
 (add-hook `yas-minor-mode-hook (lambda () (yas-activate-extra-mode 'fundamental-mode)))
+
 ;;;
 ;;; Protocol buffers mode
 ;;; (use-package! protobuf-mode)
 
-
-(setq display-line-numbers-type nil)
-;; Frame size
-(add-to-list 'default-frame-alist '(fullscreen . fullheight))
-(add-to-list 'default-frame-alist '(width . 145))
-(add-to-list 'default-frame-alist '(top . 5))
-(add-to-list 'default-frame-alist '(left . 5))
-
 ;; Map key <escape> but _only_ after god-mode is initialized.
 (map! :after god-mode "<escape>" #'god-local-mode)
 
-;; set clangd options and priority (in case ccls is also installed)
 (setq lsp-clients-clangd-args '("--background-index"
                                 "--clang-tidy"
                                 "--completion-style=detailed"
@@ -150,19 +141,29 @@
                                 "--header-insertion-decorators=0"))
 (after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
-(use-package! gt)
-(setq gt-langs '(en es sr))
-(setq gt-default-translator (gt-translator :engines (gt-google-engine)
-                                           :taker (gt-taker :prompt t :text 'paragraph)
-                                           :render (gt-insert-render)))
-;; (use-package! chatgpt-shell)
-(use-package! gptel)
- 
-;; set default backend and model. 
-(setq gptel-model 'claude-opus-4-6
-      gptel-backend (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
-;;register openai, can be selected in menu
-(gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
+(after! lsp-mode
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-tramp-connection "clangd")
+    :major-modes '(c-mode c++-mode)
+    :remote? t
+    :server-id 'clangd-remote)))
+
+(after! eglot
+  (add-to-list 'eglot-server-programs
+               '((c-mode c++-mode c-ts-mode c++-ts-mode)
+                 "clangd"
+                 "--background-index"
+                 "--clang-tidy"
+                 "--completion-style=detailed"
+                 "--header-insertion=never"
+                 "--header-insertion-decorators=0"))
+  (setq eglot-connect-timeout 60))
+
+(after! consult
+  (setq consult-async-min-input 4
+        consult-async-refresh-delay 0.5
+        consult-async-input-debounce 0.3))
 
 ;; In support of faster remote editing, we can disable some features that are
 ;; slow over TRAMP. For example, we can disable VC (version control) checks on
@@ -181,14 +182,6 @@
         projectile-mode-line-function (lambda () " Proj")
         projectile-generic-command
            "rg -0 --files --color=never --hidden -g!.git -g!.svn -g!.cache"))
-
-;; (use-package! dall-e-shell
-;;   :config
-;;   (setq dall-e-shell-openai-key chatgpt-shell-openai-key))
-
-;; (if (string-equal (system-name) "fll-mpmn2")
-;; mu4 settings
-;; (add-to-list 'load-path "/opt/homebrew/Cellar/mu/1.12.9/share/emacs/site-lisp/mu/mue4")
 
 (set-email-account! "Stevan Akamai"
                     '((mu4e-sent-folder       . "/Sent Items")
@@ -233,28 +226,69 @@
   :config
   (exec-path-from-shell-initialize))
 
-;;; LSP over TRAMP — remote clangd
-(after! lsp-mode
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-tramp-connection "clangd")
-    :major-modes '(c-mode c++-mode)
-    :remote? t
-    :server-id 'clangd-remote)))
+(defvar-local my/dict-languages '("en")
+  "Languages for spell-fu and cape-dict. Default is English only.
+Override per buffer via file-local variables, e.g.:
+  my/dict-languages: (\"en\" \"sr-Latn\")")
+(put 'my/dict-languages 'safe-local-variable #'listp)
 
-;; Here are some additional functions/macros that could help you configure Doom:
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted s    ymbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
+(defun my/build-cape-dictionary ()
+  "Build or return cached combined word list for languages in my/dict-languages."
+  (let* ((key (string-join (sort (copy-sequence my/dict-languages) #'string<) "-"))
+         (dict-dir (expand-file-name "dicts" doom-data-dir))
+         (combined (expand-file-name (format "words-%s.txt" key) dict-dir))
+         (word-files (delq nil
+                           (mapcar (lambda (lang)
+                                     ;; spell-fu registers English as "default" (line 385 of spell-fu.el:
+                                     ;; `(or ispell-local-dictionary ispell-dictionary "default")`).
+                                     (let* ((dict (spell-fu-get-ispell-dictionary
+                                                   (if (string= lang "en") "default" lang)))
+                                            (f (spell-fu--words-file dict)))
+                                       (when (file-exists-p f) f)))
+                                   my/dict-languages))))
+    (when (= (length word-files) (length my/dict-languages))
+      (unless (file-exists-p combined)
+        (make-directory dict-dir t)
+        (with-temp-buffer
+          (dolist (f word-files)
+            (insert-file-contents f)
+            (goto-char (point-max)))
+          (let ((process-environment (cons "LC_ALL=C" process-environment)))
+            (call-process-region (point-min) (point-max) "sort" t t nil "-u"))
+          (write-region (point-min) (point-max) combined)))
+      combined)))
+
+;; Use hack-local-variables-hook so my/dict-languages is read after file-local
+;; variables are applied — mode hooks fire before that, so they see the default.
+(after! spell-fu
+  (add-hook 'hack-local-variables-hook
+            (lambda ()
+              (when spell-fu-mode
+                (dolist (lang my/dict-languages)
+                  (unless (string= lang "en")
+                    (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary lang))))))))
+
+;; after! spell-fu only (not cape): cape loads lazily on first completion trigger,
+;; so after! (spell-fu cape) would miss the hook on the first buffer visit after a
+;; fresh Emacs start. If the combined dict file is not auto-created, call
+;; (my/build-cape-dictionary) manually, then revert the buffer.
+(after! spell-fu
+  (add-hook 'hack-local-variables-hook
+            (lambda ()
+              (when (derived-mode-p 'text-mode)
+                (when-let (dict (my/build-cape-dictionary))
+                  (setq-local cape-dict-file dict)
+                  (add-hook 'completion-at-point-functions #'cape-dict nil t))))))
+
+;; ispell-completion-at-point duplicates what cape-dict already provides but
+;; ignores my/dict-languages, always completing from the global ispell dictionary
+;; (English by default). This causes English words to appear in non-English
+;; buffers even when cape-dict-file is set to a language-specific word list.
+;; Removed in hack-local-variables-hook (not with-eval-after-load) because mode
+;; hooks add it after ispell loads, so earlier removal has no effect.
+(after! spell-fu
+  (add-hook 'hack-local-variables-hook
+            (lambda ()
+              (when (derived-mode-p 'text-mode)
+                (remove-hook 'completion-at-point-functions
+                             #'ispell-completion-at-point t)))))
