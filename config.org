@@ -73,7 +73,8 @@ Load anthropic and openai API keys secrets if file exists.
   :stream t
   :key xAi-key)
 #+end_src
-** Translator
+
+* Translator
 #+begin_src elisp
 (use-package! gt)
 (setq gt-langs '(en es sr))
