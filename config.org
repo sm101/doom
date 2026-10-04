@@ -437,4 +437,25 @@ Override per buffer via file-local variables, e.g.:
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 #+end_example
-
+* Calc mode new units - bits, bytes and friends
+#+begin_src elisp
+(after! calc
+  (setq math-additional-units
+        '((bits nil "bits")
+          (B "8 * bits" "Bytes")
+          (kB  "1000 B"   "kilobyte")
+          (MB  "1000^2 B" "megabyte")
+          (GB  "1000^3 B" "gigabyte")
+          (TB  "1000^4 B" "terabyte")
+          (PB  "1000^5 B" "petabyte")
+          (EB  "1000^6 B" "exabyte")
+          (KiB "1024 B"   "kibibyte")
+          (MiB "1024^2 B" "mebibyte")
+          (GiB "1024^3 B" "gibibyte")
+          (TiB "1024^4 B" "tebibyte")
+          (PiB "1024^5 B" "pebibyte")
+          (EiB "1024^6 B" "exbibyte")))
+  
+  ;; Reset the unit table cache inside the after! block
+  (setq math-units-table nil))
+#+end_src
