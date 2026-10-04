@@ -110,13 +110,30 @@ Load anthropic and openai API keys secrets if file exists.
     (setq org-agenda-files my/org-agenda-files-work)
     (setq my/org-agenda-context 'work)
     (message "Switched to work org-agenda-files")))
+;; org-capture calls this function at capture time to resolve the target file.
+;; The name is stored in my/capture-employee-name so the template can reference
+;; it via %() without prompting a second time.
+(defvar my/capture-employee-name nil)
+(defun my/org-capture-employee-file ()
+  (setq my/capture-employee-name (read-string "Employee Name: "))
+  (let ((dir (expand-file-name "~/org/work/employees/")))
+    (make-directory dir t)
+    (expand-file-name
+     (concat (replace-regexp-in-string "[[:space:]]+" "_"
+               (downcase my/capture-employee-name))
+             ".org")
+     dir)))
+
 (after! org
   (setq org-roam-directory "~/org")
   (setq org-agenda-include-diary t)
   (setq org-capture-templates
         `(("j" "Journal" entry
            (file+olp+datetree +org-capture-journal-file)
-           "* %U %?\n%i\n%a" :prepend t))
+           "* %U %?\n%i\n%a" :prepend t)
+          ("b" "Employee Behavior Log" entry
+           (file+headline my/org-capture-employee-file "Behavior Logs")
+           "* %^{Log Type|Positive Feedback|Constructive Feedback|Incident|Performance Note}\n:PROPERTIES:\n:CAPTURED_ON: %U\n:EMPLOYEE:    %(identity my/capture-employee-name)\n:CATEGORY:    %\\1\n:END:\n\n** Situation / Context\n%?\n\n** Observed Behavior\n\n\n** Impact / Action Taken\n\n" :prepend t))
         )
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (setq org-latex-listings-options '(("breaklines" "true")))
