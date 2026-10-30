@@ -69,7 +69,7 @@ Load anthropic and openai API keys secrets if file exists.
 ;;register openai, can be selected in menu
 (gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
 ;; Register grok
-(gptel-make-xai "xAI" 
+(gptel-make-xai "xAI"
   :stream t
   :key xAi-key)
 #+end_src
