@@ -72,6 +72,10 @@ Load anthropic and openai API keys secrets if file exists.
 (gptel-make-xai "xAI"
   :stream t
   :key xAi-key)
+(gptel-make-ollama "Ollama"
+          :host "localhost:11434"
+          :stream t
+          :models '(gemma4:26b phi3:mini))
 #+end_src
 
 * Translator
