@@ -63,8 +63,8 @@ Load anthropic and openai API keys secrets if file exists.
 ;; (use-package! chatgpt-shell)
 (use-package! gptel)
  
-;; set default backend and model. 
-(setq gptel-model 'claude-opus-4-6
+;; set default backend and model.
+(setq gptel-model 'claude-opus-4-8
       gptel-backend (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
 ;;register openai, can be selected in menu
 (gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
