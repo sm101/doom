@@ -245,6 +245,9 @@ coexist safely.
                  "--completion-style=detailed"
                  "--header-insertion=never"
                  "--header-insertion-decorators=0"))
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode)
+                 "basedpyright-langserver" "--stdio"))
   (setq eglot-connect-timeout 60))
 #+end_src
 
