@@ -129,7 +129,7 @@ Load anthropic and openai API keys secrets if file exists.
      dir)))
 
 (after! org
-  (setq org-roam-directory "~/org")
+  (setq org-roam-directory (file-truename "~/org"))
   (setq org-agenda-include-diary t)
   (setq org-capture-templates
         `(("j" "Journal" entry
