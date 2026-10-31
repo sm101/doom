@@ -83,13 +83,8 @@ Load anthropic and openai API keys secrets if file exists.
         :endpoint "/apim/claude/v1/messages"
         :stream t
         :key azure-foundry-anthropic-key
-        :header (lambda (_info)
-                  (when-let* ((key (gptel--get-api-key)))
-                    `(("api-key" . ,key)
-                      ("x-api-key" . ,key)
-                      ("anthropic-version" . "2023-06-01")
-                      ("user-id" . "smarkovi_prod"))))
-        :curl-args '("--cacert" "/Users/smarkovi/.claude-certs/full_chain.pem")))
+        :curl-args '("-H" "user-id: smarkovi_prod"
+                     "--cacert" "/Users/smarkovi/.claude-certs/full_chain.pem")))
 #+end_src
 
 * Translator
