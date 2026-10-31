@@ -63,9 +63,8 @@ Load anthropic and openai API keys secrets if file exists.
 ;; (use-package! chatgpt-shell)
 (use-package! gptel)
  
-;; set default backend and model.
-(setq gptel-model 'claude-opus-4-8
-      gptel-backend (gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key))
+;; register direct Anthropic, can be selected in menu
+(gptel-make-anthropic "Claude" :stream t :key chatgpt-shell-anthropic-key)
 ;;register openai, can be selected in menu
 (gptel-make-openai "ChatGPT" :key chatgpt-shell-openai-key)
 ;; Register grok
@@ -76,6 +75,21 @@ Load anthropic and openai API keys secrets if file exists.
           :host "localhost:11434"
           :stream t
           :models '(gemma4:26b phi3:mini))
+;; Anthropic via Azure Foundry (company APIM gateway), default backend and model.
+(setq gptel-model 'claude-opus-5
+      gptel-backend
+      (gptel-make-anthropic "Claude-Foundry"
+        :host "claude-llm.dash.akamai.com"
+        :endpoint "/apim/claude/v1/messages"
+        :stream t
+        :key azure-foundry-anthropic-key
+        :header (lambda (_info)
+                  (when-let* ((key (gptel--get-api-key)))
+                    `(("api-key" . ,key)
+                      ("x-api-key" . ,key)
+                      ("anthropic-version" . "2023-06-01")
+                      ("user-id" . "smarkovi_prod"))))
+        :curl-args '("--cacert" "/Users/smarkovi/.claude-certs/full_chain.pem")))
 #+end_src
 
 * Translator
